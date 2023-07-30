@@ -1,0 +1,100 @@
+﻿@page "/"
+@using Project.Ontario.Models
+@using Project.Ontario.Services
+@inject ProjectTaskService _projectService
+@inject NavigationManager _navigationManager
+@inject ISnackbar Snackbar
+
+<PageTitle>Project Ontario - Task Manager</PageTitle>
+
+<MudPaper Class="pa-8 ma-5 mt-2" Elevation="3">
+    <MudCard Elevation="2" Class="mt-4 mb-4 pa-4">
+    <MudText Class="mb-2"><h1>Time required to complete this project is @hours hour(s) and @minutes minute(s)</h1></MudText>
+    <MudText Class="mb-2"><h1>Total cost of this project is $@cost</h1></MudText>
+    </MudCard>
+    <MudFab Color="Color.Info" Icon="@Icons.Material.Filled.Add" OnClick="AddExpense" />
+    @if (ProjectTaskObj == null)
+    {
+        <MudProgressLinear Color="Color.Error" Indeterminate="true" Class="my-7" />
+    }
+    else
+    {
+    <MudTable Items="@ProjectTaskObj" Hover="true" Elevation="3" SortLabel="Sort By" Dense="true" Class="pa-4 mt-3">
+            <HeaderContent>
+                <MudTh>Task Name</MudTh>
+                <MudTh>Description</MudTh>
+                <MudTh>Task Category</MudTh>
+                <MudTh>Number of Developers</MudTh>
+                <MudTh>Cost</MudTh>
+                <MudTh>Estimated Time (Minutes)</MudTh>
+                <MudTh>Actions</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Task Name">@context.TaskName</MudTd>
+                <MudTd DataLabel="Description">@context.Description</MudTd>
+                <MudTd DataLabel="Task Category">@context.TaskCategory</MudTd>
+                <MudTd DataLabel="Number of Developers">@context.NumberOfDevelopers</MudTd>
+                <MudTd DataLabel="Cost">$@context.CostOfTask</MudTd>
+                <MudTd DataLabel="Estimated Time (Minutes)">@context.EstimatedTime Minutes</MudTd>
+                <MudStack Class="py-16 d-flex flex-1" Row="true">
+                    <MudIconButton Href="@($"/ProjectTasks/ViewProjectTask/ProjectTask/{context.Id}")" Icon="@Icons.Filled.Preview" Color="Color.Info" />
+                    <MudIconButton Href="@($"/ProjectTasks/EditProjectTask/ProjectTask/{context.Id}")" Icon="@Icons.Filled.Edit" Color="Color.Info" />
+                    <MudIconButton Href="@($"/ProjectTasks/DeleteProjectTask/ProjectTask/{context.Id}")" Icon="@Icons.Filled.Delete" Color="Color.Info" />
+                </MudStack>
+                </RowTemplate>
+        </MudTable>
+    }
+</MudPaper>
+
+@code{
+    //Instances for the project
+    int hours = 0;
+    int minutes = 0;
+    decimal cost = 0;
+    List<ProjectTask> ProjectTaskObj;
+
+    //Onload, do this
+    protected override async Task OnInitializedAsync()
+    {
+        ProjectTaskObj = await Task.Run(() => _projectService.GetAllTasksAsync());
+
+        for (int i = 0; i < ProjectTaskObj.Count; i++)
+        {
+            if (ProjectTaskObj[i] == null)
+            {
+                // Skip null task entries
+                continue;
+            }
+
+            int estimatedTime = ProjectTaskObj[i].EstimatedTime;
+            decimal taskCost = ProjectTaskObj[i].CostOfTask;
+
+            if (estimatedTime < 0)
+            {
+                // Handle invalid negative time (if applicable)
+                // You might want to log an error or handle this case differently
+                continue;
+            }
+
+            minutes += estimatedTime;
+
+            if (minutes >= 60)
+            {
+                int hoursToAdd = minutes / 60;
+                hours += hoursToAdd;
+                minutes %= 60; // Calculate the remaining minutes
+            }
+
+            if (taskCost >= 0)
+            {
+                cost += taskCost;
+            }
+        }
+    }
+
+    //Trigger action when clicking add button
+    void AddExpense()
+    {
+        _navigationManager.NavigateTo($"/ProjectTasks/AddProjectTask");
+    }
+}

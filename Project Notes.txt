@@ -1,0 +1,135 @@
+Potential Technologies:
+ * ASP.NET Core
+ * C#
+ * Microsoft SQL Server
+ * Entity Framework Core 
+ * Nuget Packages
+ * MudBlazor Components
+ * Blazor
+ * Visual Studio
+
+Project Idea: 
+ Project Ontario - Task Manager for Software Engineers
+
+Description: 
+ Software engineers will create tasks and mark them as completed when they complete the task. The app will store the tasks and
+ estimate how long will the project take.
+
+Use Case 1: Creating a Task
+ 1- The user creates a new task by clicking "Create Task" icon.
+ 2- Task will consist of;
+    * Task Name
+    * Task Description
+    * Task Category
+    * Number of developers involve
+    * Cost of task
+ 3- The application will estimate the time length based on this logic;
+ var estimatedTimeHour = 0;
+    determineCategory(estimatedTimeHour, taskCategory){
+      if(taskCategory == "UX Design")
+        estimatedTimeHour += 1;
+      if(taskCategory == "Front-End Developer")
+        estimatedTimeHour += 3;
+      if(taskCategory == "Back-End Developer")
+       estimatedTimeHour += 6;
+    }
+    determineNumberOfDevelopers(estimatedTimeHour, numberOfDevelopers){
+      if(numberOfDevelopers >= 1)
+        estimatedTimeHour = (estimatedTimeHour/numberOfDevelopers);
+      else {
+        message("You need at least one person for this task");
+      }
+   }
+    determineCost(estimatedTimeHour, cost){
+      if(cost >= 10000){
+        estimatedTimeHour -= (estimatedTimeHour/2);
+      }
+      else if(cost >= 1000){
+        estimatedTimeHour -= (estimatedTimeHour/4);
+      }
+      else if(cost >= 100){
+        estimatedTimeHour -= (estimatedTimeHour/6);
+      }
+      else if(cost > 0){
+        estimatedTimeHour -= (estimatedTimeHour/8);
+      } 
+      else{
+        message("There needs to be at least one dollar of cost");
+      }
+   }
+ 4- Operation shall be successfully added
+ 5- The user will also be able to; 
+    * View Task
+    * Edit Task
+    * Delete Task
+
+Use Case 2: Editing a Task
+1- The user shall be able to click on "Edit" icon.
+2- The user shall edit the fields they want
+3- Once edited application will trigger estimateTime() function
+4- The information shall be edited
+
+Use Case 3: Removing a Task
+1- The user shall be able to click on "Delete icon.
+2- The application shall ask whether to delete the task or not
+3- The application will delete the task
+
+Use Case 4: View Task Info
+1- The user shall click "View" icon.
+2- They will be able to view;
+    * Task Name
+    * Task Description
+    * Task Category
+    * Number of developers involve
+    * Cost of task
+    * Estimated Time for the App
+3- The user shall be able to perform;
+    * Mark as Complete
+    * Edit
+    * Delete
+
+Use Case 5: View App Information
+1- The user will click "About Project Ontario" button.
+2- They will view info related to application. 
+
+Critical Functions:
+  determineCategory(estimatedTimeHour, taskCategory)
+  determineNumberOfDevelopers(estimatedTimeHour, numberOfDevelopers)
+  determineCost(estimatedTimeHour, cost)
+
+Models:
+ Task
+  Id (guid) (primary key)
+  taskName (string)
+  description (string)
+  taskCategory (string)
+  numberOfDevelopers (integer)
+  costOfTask (decimal)
+  estimatedTime (time)
+
+DBContext Features:
+ * Create Database
+ * Seed Data
+
+Services:
+ taskService
+  getAllTasks()
+  getTaskById(Guid Id)
+  editTask(Guid Id)
+  deleteTask(Guid Id)
+
+Server:
+ Local DB Server
+  ProjectOntarioServer
+
+Pages:
+ * ManageTasks (DefaultPage)
+ * Version (Dialog)
+
+Resources:
+   * Setting up MudBlazor (Front-End): https://mudblazor.com/getting-started/installation#using-our-dotnet-templates
+   * MudBlazor Templates (Front-End): https://mudblazor.com/components/appbar#api
+   * .NET CRUD with EF Core (Back-End): https://www.c-sharpcorner.com/article/blazor-crud-app-using-entity-framework-core-in-net-5/
+   * Previous Project: Avalon https://github.com/denizkarya1999/Avalon.Academia/blob/main/Project.Avalon/Program.cs
+   * ChatGPT (AI): https://chat.openai.com/chat
+   * Stack Overflow: https://stackoverflow.com/

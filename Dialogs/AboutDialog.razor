@@ -1,0 +1,33 @@
+﻿@inject IJSRuntime JSRuntime;
+
+<MudDialog>
+    <DialogContent>
+        <p><b>Edition:</b> Hackhaton</p>
+        <p><b>Version:</b> 1.0</p>
+        <p><b>Release Date:</b> July 30th 2023</p>
+        <p><b>Created by:</b> Deniz K. Acikbas</p>
+        <p><b>Type: </b>Hackhaton Project</p>
+        <p><b>Technologies:</b></p>
+        <MudChip Variant="Variant.Text">Microsoft SQL Server 2019</MudChip>
+        <MudChip Variant="Variant.Text">Entity Framework Core</MudChip>
+        <MudChip Variant="Variant.Text">C#</MudChip>
+        <MudChip Variant="Variant.Text">MudBlazor</MudChip>
+        <MudChip Variant="Variant.Text">ASP.NET Core</MudChip>
+        <MudChip Variant="Variant.Text">.NET Framework</MudChip>
+        </DialogContent>
+        <DialogActions>
+            <MudButton Color="Color.Info" OnClick="SourceCode">Download Source Code</MudButton>
+            <MudButton Color="Color.Info" OnClick="Submit">Ok</MudButton>
+            </DialogActions>
+    </MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    void Submit() => MudDialog.Close(DialogResult.Ok(true));
+
+    private async void SourceCode()
+    {
+        await JSRuntime.InvokeAsync<object>("open", "https://github.com/denizkarya1999", "_blank");
+    }
+}

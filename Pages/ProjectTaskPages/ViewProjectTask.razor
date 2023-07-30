@@ -1,0 +1,45 @@
+﻿@page "/ProjectTasks/ViewProjectTask/ProjectTask/{UID:guid}"
+@using Project.Ontario.Models
+@using Project.Ontario.Services
+@inject ProjectTaskService _projectService
+@inject NavigationManager _navigationManager
+@inject ISnackbar Snackbar
+
+<PageTitle>Project Ontario: View Project Task</PageTitle>
+
+<MudPaper Class="pa-8 ma-5 mt-2" Elevation="3">
+    <MudText Class="mb-2"><h1><strong>@currentProjectTask.TaskName</strong></h1></MudText>
+    <MudCard Elevation="2" Class="mt-4 pa-4">
+        <MudText>@currentProjectTask.Description</MudText>
+        <MudText><MudIcon Icon="@Icons.Material.Filled.Category" Size="Size.Small" /> Is a @currentProjectTask.TaskCategory task</MudText>
+        <MudText><MudIcon Icon="@Icons.Material.Filled.People" Size="Size.Small" /> Has @currentProjectTask.NumberOfDevelopers developers</MudText>
+        <MudText><MudIcon Icon="@Icons.Material.Filled.AttachMoney" Size="Size.Small" /> Costs $@currentProjectTask.CostOfTask</MudText>
+        <MudText><MudIcon Icon="@Icons.Material.Filled.Timer" Size="Size.Small" /> Will take @currentProjectTask.EstimatedTime minutes</MudText>
+    </MudCard>
+    <MudButton Class="mt-4 mr-4" OnClick="EditProjectTask" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Edit" Color="Color.Warning">EDIT PROJECT TASK</MudButton>
+    <MudButton Class="mt-4 mr-4" OnClick="DeleteProjectTask" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error">DELETE PROJECT TASK</MudButton>
+    </MudPaper>
+
+@code {
+    [Parameter] public Guid UID { get; set; }
+
+    ProjectTask currentProjectTask = new ProjectTask();
+
+    //Do action during intialization
+    protected override async Task OnInitializedAsync()
+    {
+        currentProjectTask = await Task.Run(() => _projectService.GetTaskByIdAsync(UID));
+    }
+
+    //Edit Project Task
+    void EditProjectTask()
+    {
+        _navigationManager.NavigateTo($"/ProjectTasks/EditProjectTask/ProjectTask/{currentProjectTask.Id}");
+    }
+
+    //Delete Project Task
+    void DeleteProjectTask()
+    {
+        _navigationManager.NavigateTo($"/ProjectTasks/DeleteProjectTask/ProjectTask/{currentProjectTask.Id}");
+    }
+}

@@ -1,0 +1,40 @@
+﻿@inherits LayoutComponentBase
+@inject IDialogService DialogService
+@inject NavigationManager _navigationManager
+@using Project.Ontario.Dialogs
+
+<MudThemeProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+    <MudAppBar Elevation="0" Color="Color.Info">
+        <MudIconButton @onclick="Home" Icon="@Icons.Material.Filled.Home" Color="Color.Inherit"></MudIconButton>
+        <MudSpacer />
+        <MudText Typo="Typo.h5" Align="Align.Center"><b>Project Ontario</b></MudText>
+        <MudSpacer />
+        <MudMenu Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit">
+            <MudMenuItem @onclick="InfoDialog">
+                About Project Ontario
+            </MudMenuItem>
+        </MudMenu>
+    </MudAppBar>
+    <MudMainContent>
+        <MudContainer MaxWidth="MaxWidth.Large">
+            @Body
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
+@code {
+    private void InfoDialog()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+        DialogService.Show<AboutDialog>("About Project Ontario", options);
+    }
+
+    private void Home()
+    {
+        _navigationManager.NavigateTo($"/");
+    }
+}

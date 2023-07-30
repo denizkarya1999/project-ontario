@@ -1,0 +1,59 @@
+﻿@page "/ProjectTasks/EditProjectTask/ProjectTask/{UID:guid}"
+@using Project.Ontario.Models
+@using Project.Ontario.Services
+@inject ProjectTaskService _projectService
+@inject NavigationManager _navigationManager
+@inject ISnackbar Snackbar
+
+<PageTitle>Project Ontario: Edit Project Task</PageTitle>
+
+<MudPaper Class="pa-8 ma-5 mt-2" Elevation="3">
+    <MudText Class="mb-2"><h1><strong>Edit Project Task</strong></h1></MudText>
+    <MudCard Elevation="2" Class="mt-4 pa-4">
+        <MudTextField @bind-Value="@currentProjectTask.TaskName" Clearable="true" Label="Task Name" Margin="Margin.Dense" />
+        <MudTextField @bind-Value="@currentProjectTask.Description" Clearable="true" Label="Description" Lines="4" Margin="Margin.Dense" />
+        <MudSelect Class="mt-4" T="string" @bind-Value="@currentProjectTask.TaskCategory" Label="Task Categories" AnchorOrigin="Origin.BottomCenter">
+            @foreach (var task in taskTypes)
+            {
+                <MudSelectItem T="string" Value="@task">@task</MudSelectItem>
+            }
+        </MudSelect>
+        <MudNumericField @bind-Value="@currentProjectTask.NumberOfDevelopers" Min="1" Clearable="true" Label="Number of Developers" Margin="Margin.Dense" />
+        <MudTextField @bind-Value="@currentProjectTask.CostOfTask" Clearable="true" Label="Cost of Task ($)" Margin="Margin.Dense" />
+        <MudNumericField @bind-Value="@currentProjectTask.EstimatedTime" Min="1" Clearable="true" Label="Estimated Time (Minutes)" Margin="Margin.Dense" />
+    </MudCard>
+    <MudButton Class="mt-4 mr-4" OnClick="UpdateProjectTask" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Edit" Color="Color.Success">UPDATE PROJECT TASK</MudButton>
+    <MudButton Class="mt-4 mr-4" OnClick="Cancel" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Cancel" Color="Color.Default">CANCEL</MudButton>
+</MudPaper>
+
+@code {
+    [Parameter] public Guid UID { get; set; }
+
+    ProjectTask currentProjectTask = new ProjectTask();
+
+    //Create an array
+    private string[] taskTypes =
+    {
+        "UX Design", "Front-End Development", "Back-End Development"
+    };
+
+    //Do action during intialization
+    protected override async Task OnInitializedAsync()
+    {
+        currentProjectTask = await Task.Run(() => _projectService.GetTaskByIdAsync(UID));
+    }
+
+    //Update Project Task
+    protected async void UpdateProjectTask()
+    {
+        await _projectService.EditTaskAsync(currentProjectTask);
+        _navigationManager.NavigateTo("/ProjectTasks/ViewProjectTask/ProjectTask/" + currentProjectTask.Id);
+        Snackbar.Add("Operation successfully completed", Severity.Success);
+    }
+
+    //Trigger action when clicking cancel button
+    void Cancel()
+    {
+        _navigationManager.NavigateTo("/ProjectTasks/ViewProjectTask/ProjectTask/" + currentProjectTask.Id);
+    }
+}

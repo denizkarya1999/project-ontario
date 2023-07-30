@@ -1,0 +1,60 @@
+﻿@page "/ProjectTasks/AddProjectTask"
+@using Project.Ontario.Models
+@using Project.Ontario.Services
+@inject ProjectTaskService _projectService
+@inject NavigationManager _navigationManager
+@inject ISnackbar Snackbar
+
+<PageTitle>Project Ontario: Create Project Task</PageTitle>
+
+<MudPaper Class="pa-8 ma-5 mt-2" Elevation="3">
+   <MudText Class="mb-2"><h1><strong>Create Project Task</strong></h1></MudText>
+   <MudCard Elevation="2" Class="mt-4 pa-4">
+        <MudTextField @bind-Value="@newTask.TaskName" Clearable="true" Label="Task Name" Margin="Margin.Dense" />
+        <MudTextField @bind-Value="@newTask.Description" Clearable="true" Label="Description" Lines="4" Margin="Margin.Dense" />
+        <MudSelect Class="mt-4" T="string" @bind-Value="@newTask.TaskCategory" Label="Task Categories" AnchorOrigin="Origin.BottomCenter">
+            @foreach (var task in taskTypes)
+            {
+                <MudSelectItem T="string" Value="@task">@task</MudSelectItem>
+            }
+        </MudSelect>
+   <MudNumericField @bind-Value="@newTask.NumberOfDevelopers" Min="1" Clearable="true" Label="Number of Developers" Margin="Margin.Dense" />
+   <MudTextField @bind-Value="@newTask.CostOfTask" Clearable="true" Label="Cost of Task ($)" Margin="Margin.Dense" />
+   <MudNumericField @bind-Value="@newTask.EstimatedTime" Min="1" Clearable="true" Label="Estimated Time (Minutes)" Margin="Margin.Dense" />
+   </MudCard>
+    <MudButton Class="mt-4 mr-4" OnClick="CreateProjectTask" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Add" Color="Color.Success">ADD PROJECT TASK</MudButton>
+    <MudButton Class="mt-4 mr-4" OnClick="Cancel" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Cancel" Color="Color.Default">CANCEL</MudButton>
+</MudPaper>
+
+@code {
+    //Create an array
+    private string[] taskTypes =
+    {
+        "UX Design", "Front-End Development", "Back-End Development"
+    };
+
+    //Add a new projectTask
+    ProjectTask newTask = new ProjectTask()
+    {
+       Id = new Guid()
+    };
+
+    //Create projectTask
+    protected async void CreateProjectTask()
+    {
+        try{
+            await _projectService.CreateTask(newTask);
+            _navigationManager.NavigateTo($"/");
+            Snackbar.Add("Operation successfully completed", Severity.Success);
+        } catch (Exception ex)
+        {
+            Snackbar.Add("You must enter a valid task.", Severity.Error);
+        }
+    }
+
+    // Cancel operation
+    void Cancel()
+    {
+        _navigationManager.NavigateTo($"/");
+    }
+}
